@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import sys
 
 mypath = "img"
 
@@ -26,11 +27,13 @@ class ImageGetterSingleton(object):
                 #Saves the lights position
                 self.__light = self.__one_hot_encoder(position)
                 self.__light_to_be_Set = False
+                print("Now set the orientation of the face")
+                return "Now set the orientation of the face"
             else:
                 #Saves the face orientation
                 self.__orientation = self.__one_hot_encoder(position)
                 self.__light_to_be_Set = True
-                self.pop()
+                return self.pop()
 
         #Moves to the following image.
         #The current image is stored only both orientation and lights are set
@@ -39,7 +42,13 @@ class ImageGetterSingleton(object):
                 self.__dataframe.loc[len(self.__dataframe)] = [self.__names[self.__indx]] + self.__light + self.__orientation
             self.background_changed = True
             self.__indx -= -1
+            if self.__indx == len(self.__names):
+                self.quit()
+                sys.exit()
+            print(self.__names[self.__indx])
+            print("Set the light source in this image")
             self.current_img = mypath + "\\\\" + self.__names[self.__indx]
+            return self.__names[self.__indx] + "\nSet the light source in this image"
 
         def quit(self):
             self.__dataframe.to_csv("dataset.csv", encoding='utf-8', index=False)

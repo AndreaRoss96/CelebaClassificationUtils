@@ -28,9 +28,3 @@ def run_game():
 
 
 run_game()
-
-
-"""for filen in os.listdir(mypath):
-    path = mypath + "\\\\" + filename
-    print(path)
-"""
