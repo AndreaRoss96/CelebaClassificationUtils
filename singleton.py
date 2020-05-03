@@ -11,7 +11,10 @@ class ImageGetterSingleton(object):
         def __init__(self):
             #The images are considered only if they are not in the dataset
             self.__dataframe = pd.read_csv("dataset.csv")
-            self.__names =[filen for filen in os.listdir(mypath) if filen not in self.__dataframe.iloc[:,0]]
+            print(self.__dataframe.iloc[:,0])
+            print([filen for filen in os.listdir(mypath)])
+            self.__names = np.setdiff1d([filen for filen in os.listdir(mypath)],[self.__dataframe.iloc[:,0]])
+            print(self.__names)
             self.__indx = 0
             self.current_img = mypath + "\\\\" +self.__names[self.__indx]
             #TODO questa variabile dice se devono essere settate le fonti luminose
@@ -36,7 +39,7 @@ class ImageGetterSingleton(object):
                 self.__dataframe.loc[len(self.__dataframe)] = [self.__names[self.__indx]] + self.__light + self.__orientation
             self.background_changed = True
             self.__indx -= -1
-            self.current_img = self.__names[self.__indx]
+            self.current_img = mypath + "\\\\" + self.__names[self.__indx]
 
         def quit(self):
             self.__dataframe.to_csv("dataset.csv", encoding='utf-8', index=False)
