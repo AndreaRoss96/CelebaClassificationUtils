@@ -12,8 +12,6 @@ class ImageGetterSingleton(object):
         def __init__(self):
             #The images are considered only if they are not in the dataset
             self.__dataframe = pd.read_csv("dataset.csv")
-            print(self.__dataframe.iloc[:,0])
-            print([filen for filen in os.listdir(mypath)])
             self.__names = np.setdiff1d([filen for filen in os.listdir(mypath)],[self.__dataframe.iloc[:,0]])
             print(self.__names)
             self.__indx = 0
@@ -46,6 +44,7 @@ class ImageGetterSingleton(object):
                 self.quit()
                 sys.exit()
             print(self.__names[self.__indx])
+            self.__light_to_be_Set = True
             print("Set the light source in this image")
             self.current_img = mypath + "\\\\" + self.__names[self.__indx]
             return self.__names[self.__indx] + "\nSet the light source in this image"
