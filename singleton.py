@@ -17,6 +17,8 @@ class ImageGetterSingleton(object):
             self.__indx = 0
             self.current_img = mypath + "\\\\" +self.__names[self.__indx]
             #TODO questa variabile dice se devono essere settate le fonti luminose
+            self.__light = None
+            self.__orientation = None
             self.__light_to_be_Set = True
             self.background_changed = True
 
@@ -36,8 +38,10 @@ class ImageGetterSingleton(object):
         #Moves to the following image.
         #The current image is stored only both orientation and lights are set
         def pop(self):
-            if 1 in self.__light and 1 in self.__orientation:
+            if self.__light != None and self.__orientation != None:
                 self.__dataframe.loc[len(self.__dataframe)] = [self.__names[self.__indx]] + self.__light + self.__orientation
+                self.__light = None
+                self.__orientation = None
             self.background_changed = True
             self.__indx -= -1
             if self.__indx == len(self.__names):
