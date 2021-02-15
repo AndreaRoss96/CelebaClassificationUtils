@@ -2,49 +2,48 @@ import os
 import numpy as np
 import pandas as pd
 import sys
-
-mypath = "img"
+mypath = "Hey\\img_align_celeba\\img_align_celeba"
 
 #This singleton helps when it comes to have a single class that manages the images and the results
 class ImageGetterSingleton(object):
     #this is the class that is used
     class __ImageGetterSingleton:
+
         def __init__(self):
             #The images are considered only if they are not in the dataset
-            self.__dataframe = pd.read_csv("dataset.csv")
-            self.__names = np.setdiff1d([filen for filen in os.listdir(mypath)],[self.__dataframe.iloc[:,0]])
-            print(self.__names)
+            self.__dataframe = pd.read_csv("mergeLight.csv")
+
+            #delete the useless rows and columns
+            self.__names = self.__dataframe.loc[self.__dataframe["final_conf"]<0.6, "Filename"].tolist()
+
             self.__indx = 0
             self.current_img = mypath + "\\\\" +self.__names[self.__indx]
             #TODO questa variabile dice se devono essere settate le fonti luminose
             self.__light = None
-            self.__orientation = None
             self.__light_to_be_Set = True
             self.background_changed = True
+            self.__options_light = {  0: "left_light",
+                                1: "center_light",
+                                2: "right_light"}
+            self.names_number = len(self.__names)
 
         def set_params(self, position):
             if self.__light_to_be_Set:
                 #Saves the lights position
-                self.__light = self.__one_hot_encoder(position)
+                self.__light = self.__options_light[position]
                 self.__light_to_be_Set = False
-                print("Now set the orientation of the face")
-                return "Now set the orientation of the face"
-            else:
-                #Saves the face orientation
-                self.__orientation = self.__one_hot_encoder(position)
-                self.__light_to_be_Set = True
                 return self.pop()
 
         #Moves to the following image.
-        #The current image is stored only both orientation and lights are set
         def pop(self):
-            if self.__light != None and self.__orientation != None:
-                self.__dataframe.loc[len(self.__dataframe)] = [self.__names[self.__indx]] + self.__light + self.__orientation
+            if self.__light != None:
+                #TODO elimina row prima di inserirla
+                self.__dataframe.drop(self.__dataframe[ self.__dataframe['Filename'] == self.__names[self.__indx] ].index , inplace=True)
+                self.__dataframe.loc[len(self.__dataframe)] = [self.__names[self.__indx],self.__light, 1.0]
                 self.__light = None
-                self.__orientation = None
             self.background_changed = True
             self.__indx -= -1
-            if self.__indx == len(self.__names):
+            if self.__indx == self.names_number:
                 self.quit()
                 sys.exit()
             print(self.__names[self.__indx])
@@ -54,7 +53,7 @@ class ImageGetterSingleton(object):
             return self.__names[self.__indx] + "\nSet the light source in this image"
 
         def quit(self):
-            self.__dataframe.to_csv("dataset.csv", encoding='utf-8', index=False)
+            self.__dataframe.to_csv("mergeLight.csv", encoding='utf-8', index=False)
 
         def __one_hot_encoder(self, position):
             list = [0,0,0]
@@ -63,10 +62,6 @@ class ImageGetterSingleton(object):
             else:
                 print("errore posizione sbagliata nel one hot encoder")
             return list.copy()
-
-
-        def __str__(self):
-            return 'self' + self.val
 
 
     instance = None

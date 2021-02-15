@@ -8,8 +8,7 @@ import pygame
 from setting import Settings
 from background import Background
 
-mypath = "img"
-
+mypath = "Hey\\img_align_celeba\\img_align_celeba"
 def run_game():
 
     pygame.init()
