@@ -11,7 +11,7 @@ class ImageGetterSingleton(object):
 
         def __init__(self):
             #The images are considered only if they are not in the dataset
-            self.__dataframe = pd.read_csv("mergeLight.csv")
+            self.__dataframe = pd.read_csv("mergeOrientation.csv")
 
             #delete the useless rows and columns
             self.__names = self.__dataframe.loc[self.__dataframe["final_conf"]<0.6, "Filename"].tolist()
@@ -22,9 +22,9 @@ class ImageGetterSingleton(object):
             self.__light = None
             self.__light_to_be_Set = True
             self.background_changed = True
-            self.__options_light = {  0: "left_light",
-                                1: "center_light",
-                                2: "right_light"}
+            self.__options_light = {  0: "left_pose",
+                                1: "center_pose",
+                                2: "right_pose"}
             self.names_number = len(self.__names)
 
         def set_params(self, position):
@@ -48,12 +48,12 @@ class ImageGetterSingleton(object):
                 sys.exit()
             print(self.__names[self.__indx])
             self.__light_to_be_Set = True
-            print("Set the light source in this image")
+            print("Set the orientation of this image")
             self.current_img = mypath + "\\\\" + self.__names[self.__indx]
-            return self.__names[self.__indx] + "\nSet the light source in this image"
+            return self.__names[self.__indx] + "\nSet the orientation of this image"
 
         def quit(self):
-            self.__dataframe.to_csv("mergeLight.csv", encoding='utf-8', index=False)
+            self.__dataframe.to_csv("mergeOrientation.csv", encoding='utf-8', index=False)
 
         def __one_hot_encoder(self, position):
             list = [0,0,0]
